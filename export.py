@@ -3,11 +3,39 @@ from urllib.parse import urlencode
 
 import requests
 
-# CONFIGURATION - Rename this file as needed
-exportFileName = "exported_links_renamethis.csv"
-# Add API key here
-apiKey = " "
+
+class MissingAPIKeyError(Exception):
+    pass
+
+class DefaultFilenameError(Exception):
+    pass
+
+def validate_api_key(api_key):
+    if not api_key:
+        raise MissingAPIKeyError("API key is required. Please add your API key to the configuration section.")
+    return api_key
+
+def validate_filename(filename):
+    if "renamethis" in filename.lower():
+        raise DefaultFilenameError("Please rename the export file by changing 'exportFileName' in the configuration")
+
+def get_headers(api_key):
+    if not api_key:
+        raise MissingAPIKeyError("API key is required. Please add your API key to the configuration section.")
+    return {
+        "apikey": api_key,
+        "Content-Type": "application/json",
+    }
+
+# Configuration
+apiKey = " ".strip()
 workspace = None
+exportFileName = "exported_links_renamethis.csv"
+
+if __name__ == "__main__":
+    validate_filename(exportFileName)
+    headers = get_headers(apiKey)  # Use these headers for your requests
+
 fieldnames = ['id', 'createdAt', 'shortUrl', 'destination']
 
 # CONSTRAINTS
